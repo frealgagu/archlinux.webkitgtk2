@@ -1,8 +1,8 @@
 diff --git a/GNUmakefile.in b/GNUmakefile.in
-index 7d4d21c..646197f 100644
+index 6035693..4d86e80 100644
 --- a/GNUmakefile.in
 +++ b/GNUmakefile.in
-@@ -96250,8 +96250,8 @@ $(GENSOURCES_WEBKIT)/webkitmarshal.h: stamp-webkitmarshal.h
+@@ -96238,8 +96238,8 @@ $(GENSOURCES_WEBKIT)/webkitmarshal.h: stamp-webkitmarshal.h
  	@true
  
  stamp-webkitmarshal.cpp: $(WEBKIT_MARSHAL_LIST)

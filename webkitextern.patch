@@ -1,0 +1,16 @@
+diff --git a/Source/WebKit/gtk/GNUmakefile.am b/Source/WebKit/gtk/GNUmakefile.am
+index 5502f25..d03c2bd 100644
+--- a/Source/WebKit/gtk/GNUmakefile.am
++++ b/Source/WebKit/gtk/GNUmakefile.am
+@@ -352,9 +352,9 @@ $(GENSOURCES_WEBKIT)/webkitmarshal.h: stamp-webkitmarshal.h
+ 	@true
+ 
+ stamp-webkitmarshal.cpp: $(WEBKIT_MARSHAL_LIST)
+-	$(AM_V_GEN) echo "extern \"C\" {" > $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
+-	$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --body >> $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
++	$(AM_V_GEN)$(GLIB_GENMARSHAL) --prefix=webkit_marshal $(WEBKIT_MARSHAL_LIST) --body > $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
+ 	echo '}' >> $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
++	sed -i "3i extern \"C\" {" $(GENSOURCES_WEBKIT)/webkitmarshal.cpp && \
+ 	echo timestamp > $(@F)
+ 
+ stamp-webkitmarshal.h: $(WEBKIT_MARSHAL_LIST)

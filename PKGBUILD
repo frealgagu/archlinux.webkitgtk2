@@ -6,7 +6,7 @@
 
 pkgname=webkitgtk2
 pkgver=2.4.11
-pkgrel=27
+pkgrel=28
 epoch=3
 pkgdesc="Legacy Web content engine for GTK+ 2"
 arch=("armv7h" "i686" "x86_64")
@@ -18,7 +18,7 @@ optdepends=(
   "gst-plugins-base: free media decoding"
   "gst-plugins-good: media decoding"
 )
-makedepends=("gobject-introspection" "gperf" "gtk3" "mesa" "ruby")
+makedepends=("glib2-devel" "gobject-introspection" "gperf" "gtk3" "mesa" "ruby")
 provides=("libwebkit=${pkgver}")
 conflicts=("libwebkit")
 replaces=("libwebkit")
@@ -35,6 +35,12 @@ source=(
   "grammar.patch"
   "glib-2.68.0.patch"
   "volatile.patch"
+  "rubyasm.patch"
+  "wtfstd17.patch"
+  "compilerflags.patch"
+  "webkitextern.patch"
+  "xmlconst.patch"
+  "bison3.7.patch"
 )
 sha256sums=(
   "588aea051bfbacced27fdfe0335a957dca839ebe36aa548df39c7bbafdb65bf7"
@@ -44,9 +50,15 @@ sha256sums=(
   "a1e2f24b28273746b2fbaecef42495f6314c76b16a446c22dc123e6a3afb58c8"
   "d1a9ccc1ae5cb042bc47ae846ff84513ca7b9c7bc999c546ffba48572f0373a0"
   "7341eb4c229656046be6ac526f94b9f4a742a66178412caf22a988677f5bf9d9"
-  "5a62fbd0df69c6951562e72cd7b3c58cae7f2807338ced7b4a1973440b3dd193"
-  "db202fedd72a21318646c561afcd76656ea8ba6b1d641363fc7b69ae5687aa28"
+  "93f58c0b375828f430306cce584fb577fa75776525ea74a98aec15cb56e93639"
+  "5736a481c81ae16d2c69bfe2ceccc834a2447e3882d91c603528c6c700b6db95"
   "013bf12e0ab79664c74f1ef3c299f564cd1f47feab2a3daa5ab80db1c5aebfa1"
+  "c56be904dca926b656236bbed3fb918d6ecf9ec41553aaea6daccbe9bd20068c"
+  "547342bf1ec0ef6cb7981d7c7c96c9b9ce8119673021853bc92cd59c94ea1143"
+  "e8f33ac73fcac05d0ce86cb16db144fde3d528a8523fde4d6de66c84726b49c1"
+  "90c917a59abc6fb4f17793688c3fec548f4f5789638294044359fb8250512965"
+  "0a36cc9a84715105579a028fae87ee5d770456bb50f7321f6fcde5d24c6c214f"
+  "9f796028ba0873fd55ea1693dec5896bc0f955d0cda062e2b326d62dbda45140"
 )
 
 prepare() {
@@ -73,6 +85,16 @@ prepare() {
 
   # gcc11+ compiler volatile patch
   patch -Np1 -i "${srcdir}/volatile.patch"
+
+  patch -Np1 -i "${srcdir}/rubyasm.patch"
+  patch -Np1 -i "${srcdir}/wtfstd17.patch"
+  patch -Np1 -i "${srcdir}/compilerflags.patch"
+  patch -Np1 -i "${srcdir}/webkitextern.patch"
+  patch -Np1 -i "${srcdir}/xmlconst.patch"
+  patch -Np1 -i "${srcdir}/bison3.7.patch"
+
+  # Needed again for the new patched files
+  autoreconf -ifv
 }
 
 build() (
@@ -91,8 +113,7 @@ build() (
     --libexecdir=/usr/lib/${pkgname} \
     --enable-introspection \
     --with-gtk=2.0 \
-    --disable-webkit2 \
-    --disable-gtk-doc
+    --disable-webkit2
 
   # https://bugzilla.gnome.org/show_bug.cgi?id=655517
   sed -i "s/ -shared / -Wl,-O1,--as-needed\0/g" "${srcdir}/build-gtk2/libtool"
